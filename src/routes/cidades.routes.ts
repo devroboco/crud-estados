@@ -1,12 +1,15 @@
 import { Router } from "express";
-import * as cidadesController from "../controllers/cidades.controllers.js";
+import * as cidadesController from "../controllers/cidades.controller.js";
+import { autenticar } from "../middlewares/auth.middleware.js";
 
-const router = Router();
+const routerCidades = Router();
 
-router.get('/', cidadesController.listar);
-router.get('/:id', cidadesController.buscar);
-router.post('/', cidadesController.criar);
-router.put('/:id', cidadesController.atualizar);
-router.delete('/:id', cidadesController.deletar);
+routerCidades.use(autenticar);
 
-export default router;
+routerCidades.get("/", cidadesController.listar);
+routerCidades.get("/:id", cidadesController.buscar);
+routerCidades.post("/", cidadesController.criar);
+routerCidades.put("/:id", cidadesController.atualizar);
+routerCidades.delete("/:id", cidadesController.deletar);
+
+export default routerCidades;
