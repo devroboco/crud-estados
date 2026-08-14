@@ -7,6 +7,7 @@ const routerCidades = Router();
 routerCidades.use(autenticar);
 
 routerCidades.get("/", cidadesController.listar);
+routerCidades.get("/quantidade", cidadesController.contarPorEstado);
 routerCidades.get("/:id", cidadesController.buscar);
 routerCidades.post("/", cidadesController.criar);
 routerCidades.put("/:id", cidadesController.atualizar);
