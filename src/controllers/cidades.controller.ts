@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as cidadeModel from "../models/cidade.models.js";
 import { getRedisClient } from "../database/redis.js";
+import { gerarIdCidade } from "../services/geradorId.js";
 
 export async function listar(req: Request, res: Response) {
   const clientRedis = getRedisClient();
@@ -49,8 +50,18 @@ export async function criar(req: Request, res: Response) {
     return res.status(400).json({ message: "nome e estado devem ser strings" });
   }
 
-  const cidadeCriada = await cidadeModel.criar({ nome, estado });
-  res.status(201).json(cidadeCriada);
+  try {
+    const id = await gerarIdCidade();
+
+    const cidadeCriada = await cidadeModel.criar({ nome, estado, codigo: id });
+    return res.status(201).json(cidadeCriada);
+  } catch (error) {
+    console.error("Falha ao se comunicar com o gerador de IDs:", error);
+    return res.status(502).json({
+      message:
+        "Não foi possível gerar o código da cidade. O serviço de IDs está indisponível.",
+    });
+  }
 }
 
 export async function atualizar(req: Request, res: Response) {

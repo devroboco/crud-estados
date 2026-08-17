@@ -8,6 +8,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672
       - REDIS_URL=redis://redis:6379
+      - GERADOR_ID_URL=http://gerador-id:3002
     depends_on:
       mongo:
         condition: service_started
@@ -36,6 +37,11 @@ services:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+
+  gerador-id:
+    build: ../gerador-id
+    ports:
+      - "3002:3002"
 
 volumes:
   mongo-data:
