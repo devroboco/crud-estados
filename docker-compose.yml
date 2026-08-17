@@ -6,8 +6,12 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27017
       - JWT_SECRET=${JWT_SECRET}
+      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672
     depends_on:
-      - mongo
+      mongo:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
 
   mongo:
     image: mongo:7.0
@@ -15,6 +19,17 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mongo-data:
