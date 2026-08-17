@@ -1,8 +1,22 @@
 import { Request, Response } from "express";
 import * as cidadeModel from "../models/cidade.models.js";
+import { getRedisClient } from "../database/redis.js";
 
 export async function listar(req: Request, res: Response) {
+  const clientRedis = getRedisClient();
+
+  const cacheCidades = await clientRedis.get("cidades:todas");
+
+  if (cacheCidades) {
+    const cidades = JSON.parse(cacheCidades);
+    console.log("cache hit");
+    res.json(cidades);
+    return;
+  }
+
+  console.log("cache miss");
   const cidades = await cidadeModel.listarTodas();
+  await clientRedis.setEx("cidades:todas", 60, JSON.stringify(cidades));
   res.json(cidades);
 }
 

@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import { conectar } from "./database/connection.js";
 import { conectarRabbitMQ } from "./database/rabbitmq.js";
+import { conectarRedis } from "./database/redis.js";
 import routerCidades from "./routes/cidades.routes.js";
 import routerUsuarios from "./routes/usuarios.routes.js";
 import routerAuth from "./routes/auth.routes.js";
@@ -22,6 +23,7 @@ app.use("/relatorios", routerRelatorios);
 async function iniciar() {
   await conectar();
   await conectarRabbitMQ();
+  await conectarRedis();
   app.listen(3000, () => {
     console.log("Server is running on port 3000");
   });
